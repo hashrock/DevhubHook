@@ -44,7 +44,16 @@ app.post('/redmine', function(req, res){
 	var msg = author + " " + action + " [" + subject + "]("+ url + ")";
 	postData("redmine", msg);
 	res.json({});
-
+});
+app.post('/gitbucket', function(req, res){
+	var data = req.body;
+  var payload = JSON.parse(data.payload);
+  var pusher = payload["pusher"]["name"];
+  var repo = payload["repository"]["name"];
+  var url = payload["repository"]["url"];
+	var msg = pusher + " pushes to [" + repo + "]("+ url + ")";
+	postData("gitbucket", msg);
+	res.json({});
 });
 
 http.createServer(app).listen(app.get('port'), function(){
