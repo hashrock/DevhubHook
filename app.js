@@ -47,11 +47,18 @@ app.post('/redmine', function(req, res){
 });
 app.post('/gitbucket', function(req, res){
 	var data = req.body;
-  var payload = JSON.parse(data.payload);
-  var pusher = payload["pusher"]["name"];
-  var repo = payload["repository"]["name"];
-  var url = payload["repository"]["url"];
-	var msg = pusher + " pushes to [" + repo + "]("+ url + ")";
+	var payload = JSON.parse(data.payload);
+	var pusher = payload["pusher"]["name"];
+	var commits = payload["commits"];
+	var repo = payload["repository"]["name"];
+	var url = payload["repository"]["url"];
+
+	var commit_comments = [];
+	commits.forEach(function(value){
+		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
+	});
+
+	var msg = pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
 	postData("gitbucket", msg);
 	res.json({});
 });
