@@ -64,6 +64,13 @@ app.post('/gitbucket', function(req, res){
 });
 app.post('/github', function(req, res){
 	var payload = req.body;
+
+	// for ping
+	if (payload["zen"]){
+		res.json({});
+		return;
+	}
+
 	var pusher = payload["pusher"]["name"];
 	var commits = payload["commits"];
 	var repo = payload["repository"]["name"];
