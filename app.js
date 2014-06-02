@@ -62,6 +62,29 @@ app.post('/gitbucket', function(req, res){
 	postData("gitbucket", msg);
 	res.json({});
 });
+app.post('/github', function(req, res){
+	var payload = req.body;
+
+	// for ping
+	if (payload["zen"]){
+		res.json({});
+		return;
+	}
+
+	var pusher = payload["pusher"]["name"];
+	var commits = payload["commits"];
+	var repo = payload["repository"]["name"];
+	var url = payload["repository"]["url"];
+
+	var commit_comments = [];
+	commits.forEach(function(value){
+		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
+	});
+
+	var msg = pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
+	postData("github", msg);
+	res.json({});
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
