@@ -14,6 +14,7 @@ DevHubと各サービスのWebHookをつないで通知を集約するツール�
  * Gitlab
  * Redmine with [Redmine WebHook](https://github.com/suer/redmine_webhook)
  * GitBucket
+ * GitHub
 
 Usage
 ----
@@ -36,3 +37,5 @@ $ PORT=4000 DEVHUB=http://192.168.1.5:3000 node app.js
  * gitlab: http://192.168.1.5:4000/gitlab
  * redmine: http://192.168.1.5:4000/redmine
  * gitbucket: http://192.168.1.5:4000/gitbucket
+ * github: http://192.168.1.5:4000/github
+
