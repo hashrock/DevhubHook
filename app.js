@@ -6,12 +6,15 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
+var moment = require('moment');
 
 var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('devhub', process.env.DEVHUB);
+app.set('memo_no', process.env.NO);
+app.set('memo_line', process.env.LINE);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -27,6 +30,15 @@ if ('development' == app.get('env')) {
 
 function postData(name, msg){
 	http.get(app.get('devhub') + "/notify?name="+name+"&msg="+msg, function(){});
+}
+
+function postDataToMemo(name, msg){
+  if (!(app.get('memo_no') && app.get('memo_line'))){ return; }
+
+  no = app.get('memo_no');
+  line = app.get('memo_line');
+
+	http.get(app.get('devhub') + "/memo?name="+name+"&msg="+msg+"&no="+no+"&line="+line, function(){});
 }
 
 app.post('/gitlab', function(req, res){
@@ -53,6 +65,7 @@ app.post('/gitbucket', function(req, res){
 	var repo = payload["repository"]["name"];
 	var url = payload["repository"]["url"];
 
+  // for chat
 	var commit_comments = [];
 	commits.forEach(function(value){
 		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
@@ -60,6 +73,17 @@ app.post('/gitbucket', function(req, res){
 
 	var msg = pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
 	postData("gitbucket", msg);
+
+  // for memo
+	commit_comments = [];
+	commits.forEach(function(value){
+		commit_comments.push("<br>                 |  - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
+	});
+
+  var now = moment().format("YYYY/MM/DD HH:mm");
+	var memo_msg = now + " | " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
+	postDataToMemo("gitbucket", memo_msg);
+
 	res.json({});
 });
 app.post('/github', function(req, res){
