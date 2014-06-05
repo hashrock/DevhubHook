@@ -71,7 +71,7 @@ app.post('/gitbucket', function(req, res){
 		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
 	});
 
-	var msg = pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
+	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
 	postData("gitbucket", msg);
 
   // for memo
@@ -81,7 +81,7 @@ app.post('/gitbucket', function(req, res){
 	});
 
   var now = moment().format("YYYY/MM/DD HH:mm");
-	var memo_msg = now + " | " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
+	var memo_msg = now + " | [" + repo + "]("+ url + ") by " + pusher + commit_comments.join(" ");
 	postDataToMemo("gitbucket", memo_msg);
 
 	res.json({});
