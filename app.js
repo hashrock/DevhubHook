@@ -33,10 +33,10 @@ function postData(name, msg){
 }
 
 function postDataToMemo(name, msg){
-  if (!(app.get('memo_no') && app.get('memo_line'))){ return; }
+	if (!(app.get('memo_no') && app.get('memo_line'))){ return; }
 
-  no = app.get('memo_no');
-  line = app.get('memo_line');
+	no = app.get('memo_no');
+	line = app.get('memo_line');
 
 	http.get(app.get('devhub') + "/memo?name="+name+"&msg="+msg+"&no="+no+"&line="+line, function(){});
 }
@@ -65,7 +65,7 @@ app.post('/gitbucket', function(req, res){
 	var repo = payload["repository"]["name"];
 	var url = payload["repository"]["url"];
 
-  // for chat
+	// for chat
 	var commit_comments = [];
 	commits.forEach(function(value){
 		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
@@ -74,13 +74,13 @@ app.post('/gitbucket', function(req, res){
 	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
 	postData("gitbucket", msg);
 
-  // for memo
+	// for memo
 	commit_comments = [];
 	commits.forEach(function(value){
 		commit_comments.push("<br>                 |  - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
 	});
 
-  var now = moment().format("YYYY/MM/DD HH:mm");
+	var now = moment().format("YYYY/MM/DD HH:mm");
 	var memo_msg = now + " | [" + repo + "]("+ url + ") by " + pusher + commit_comments.join(" ");
 	postDataToMemo("gitbucket", memo_msg);
 
