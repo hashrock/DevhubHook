@@ -29,7 +29,8 @@ if ('development' == app.get('env')) {
 }
 
 function postData(name, msg){
-	http.get(app.get('devhub') + "/notify?name="+name+"&msg="+msg, function(){});
+	var url = app.get('devhub') + "/notify?name=" + escape(name) + "&msg=" + escape(msg);
+	http.get(url, function(){});
 }
 
 function postDataToMemo(name, msg){
@@ -38,7 +39,34 @@ function postDataToMemo(name, msg){
 	no = app.get('memo_no');
 	line = app.get('memo_line');
 
-	http.get(app.get('devhub') + "/memo?name="+name+"&msg="+msg+"&no="+no+"&line="+line, function(){});
+	var url = app.get('devhub') + "/memo?name=" + escape(name) + "&msg=" + escape(msg) + "&no=" + no + "&line=" + line;
+	http.get(url, function(){});
+}
+
+function postPushNotification(name, payload){
+	var pusher = payload["pusher"]["name"];
+	var commits = payload["commits"];
+	var repo = payload["repository"]["name"];
+	var url = payload["repository"]["url"];
+
+	// for chat
+	var commit_comments = [];
+	commits.forEach(function(value){
+		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
+	});
+
+	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
+	postData(name, msg);
+
+	// for memo
+	commit_comments = [];
+	commits.forEach(function(value){
+		commit_comments.push("<br>                 |  - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
+	});
+
+	var now = moment().format("YYYY/MM/DD HH:mm");
+	var memo_msg = now + " | [" + repo + "]("+ url + ") by " + pusher + commit_comments.join(" ");
+	postDataToMemo(name, memo_msg);
 }
 
 app.post('/gitlab', function(req, res){
@@ -60,30 +88,8 @@ app.post('/redmine', function(req, res){
 app.post('/gitbucket', function(req, res){
 	var data = req.body;
 	var payload = JSON.parse(data.payload);
-	var pusher = payload["pusher"]["name"];
-	var commits = payload["commits"];
-	var repo = payload["repository"]["name"];
-	var url = payload["repository"]["url"];
 
-	// for chat
-	var commit_comments = [];
-	commits.forEach(function(value){
-		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
-	});
-
-	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
-	postData("gitbucket", msg);
-
-	// for memo
-	commit_comments = [];
-	commits.forEach(function(value){
-		commit_comments.push("<br>                 |  - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
-	});
-
-	var now = moment().format("YYYY/MM/DD HH:mm");
-	var memo_msg = now + " | [" + repo + "]("+ url + ") by " + pusher + commit_comments.join(" ");
-	postDataToMemo("gitbucket", memo_msg);
-
+	postPushNotification("gitbucket", payload);
 	res.json({});
 });
 app.post('/github', function(req, res){
@@ -95,18 +101,7 @@ app.post('/github', function(req, res){
 		return;
 	}
 
-	var pusher = payload["pusher"]["name"];
-	var commits = payload["commits"];
-	var repo = payload["repository"]["name"];
-	var url = payload["repository"]["url"];
-
-	var commit_comments = [];
-	commits.forEach(function(value){
-		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
-	});
-
-	var msg = pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
-	postData("github", msg);
+	postPushNotification("github", payload);
 	res.json({});
 });
 
