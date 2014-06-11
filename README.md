@@ -33,6 +33,12 @@ $ npm install
 $ PORT=4000 DEVHUB=http://192.168.1.5:3000 node app.js
 ```
 
+また、指定の共有メモに通知を追加したい場合は下記のようにする。(NO:共有メモNo,LINE:挿入する行)
+
+```
+$ PORT=4000 DEVHUB=http://192.168.1.5:3000 NO=5 LINE=1 node app.js
+```
+
 各WebHookにDevhubHookの待ち受けURLを指定して下さい。
  * gitlab: http://192.168.1.5:4000/gitlab
  * redmine: http://192.168.1.5:4000/redmine
