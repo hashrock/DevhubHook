@@ -66,7 +66,7 @@ function postPushNotification(name, payload){
 	});
 
 	var now = moment().format("YYYY/MM/DD HH:mm");
-	var memo_msg = now + " | [" + repo + "]("+ url + ") by " + pusher + commit_comments.join(" ");
+	var memo_msg = now + " | [" + repo + " (" + branch + ")](" + url + ") by " + pusher + commit_comments.join(" ");
 	postDataToMemo(name, memo_msg);
 }
 
