@@ -45,6 +45,7 @@ function postDataToMemo(name, msg){
 
 function postPushNotification(name, payload){
 	var pusher = payload["pusher"]["name"];
+	var branch = payload["ref"].match(/refs\/heads\/(.+)/)[1];
 	var commits = payload["commits"];
 	var repo = payload["repository"]["name"];
 	var url = payload["repository"]["url"];
@@ -55,7 +56,7 @@ function postPushNotification(name, payload){
 		commit_comments.push("<br> - [" + value["message"].split("\n")[0] + "](" + value["url"] + ")");
 	});
 
-	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + "]("+ url + ")" + commit_comments.join(" ");
+	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + " (" + branch + ")]("+ url + ")" + commit_comments.join(" ");
 	postData(name, msg);
 
 	// for memo
