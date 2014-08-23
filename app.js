@@ -15,12 +15,14 @@ app.set('port', process.env.PORT || 3000);
 app.set('devhub', process.env.DEVHUB);
 app.set('memo_no', process.env.NO);
 app.set('memo_line', process.env.LINE);
+app.set('server_host', process.env.SERVER_HOST);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.bodyParser());
+app.use(express.static(__dirname + '/public'));
 app.use(app.router);
 
 // development only
@@ -28,8 +30,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-function postData(name, msg){
+function postData(name, msg, avatar){
 	var url = app.get('devhub') + "/notify?name=" + escape(name) + "&msg=" + escape(msg);
+  if (avatar != undefined){
+    url = url + "&avatar=" + escape(avatar);
+  }
 	http.get(url, function(){});
 }
 
@@ -43,7 +48,7 @@ function postDataToMemo(name, msg){
 	http.get(url, function(){});
 }
 
-function postPushNotification(name, payload){
+function postPushNotification(name, payload, avatar){
 	var pusher = payload["pusher"]["name"];
 	var branch = payload["ref"].match(/refs\/heads\/(.+)/)[1];
 	var commits = payload["commits"];
@@ -57,7 +62,7 @@ function postPushNotification(name, payload){
 	});
 
 	var msg = ":arrow_up: " + pusher + " pushes to [" + repo + " (" + branch + ")]("+ url + ")" + commit_comments.join(" ");
-	postData(name, msg);
+	postData(name, msg, avatar);
 
 	// for memo
 	commit_comments = [];
@@ -90,7 +95,7 @@ app.post('/gitbucket', function(req, res){
 	var data = req.body;
 	var payload = JSON.parse(data.payload);
 
-	postPushNotification("gitbucket", payload);
+	postPushNotification("gitbucket", payload, "http://" + app.get("server_host") + ":" + app.get("port") + "/gitbucket.png");
 	res.json({});
 });
 app.post('/github', function(req, res){
@@ -102,7 +107,7 @@ app.post('/github', function(req, res){
 		return;
 	}
 
-	postPushNotification("github", payload);
+	postPushNotification("github", payload, "http://" + app.get("server_host") + ":" + app.get("port") + "/github.png");
 	res.json({});
 });
 
