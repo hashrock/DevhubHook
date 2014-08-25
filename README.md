@@ -30,7 +30,7 @@ Usage
 $ git clone https://github.com/181dev/DevhubHook/
 $ cd DevhubHook
 $ npm install
-$ PORT=4000 DEVHUB=http://192.168.1.5:3000 node app.js
+$ PORT=4000 DEVHUB=http://192.168.1.5:3000 SERVER_HOST=localhost node app.js
 ```
 
 また、指定の共有メモに通知を追加したい場合は下記のようにする。(NO:共有メモNo,LINE:挿入する行)
