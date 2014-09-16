@@ -32,10 +32,20 @@ if ('development' == app.get('env')) {
 
 function postData(name, msg, avatar){
 	var url = app.get('devhub') + "/notify?name=" + escape(name) + "&msg=" + escape(msg);
-  if (avatar != undefined){
-    url = url + "&avatar=" + escape(avatar);
-  }
-	http.get(url, function(){});
+    if (avatar != undefined){
+        url = url + "&avatar=" + escape(avatar);
+    }
+
+    var urlObj = require("url").parse(url);
+    var getOption = {
+        "hostname"  : urlObj.hostname,
+        "port"  : urlObj.port,
+        "path"  : urlObj.path
+    };
+    if (process.env.NODE_DEVHUB_USER && process.env.NODE_DEVHUB_PASS){
+        getOption.auth = process.env.NODE_DEVHUB_USER + ":" + process.env.NODE_DEVHUB_PASS;
+    }
+	http.get(getOption);
 }
 
 function postDataToMemo(name, msg){
@@ -45,7 +55,18 @@ function postDataToMemo(name, msg){
 	line = app.get('memo_line');
 
 	var url = app.get('devhub') + "/memo?name=" + escape(name) + "&msg=" + escape(msg) + "&no=" + no + "&line=" + line;
-	http.get(url, function(){});
+
+    var urlObj = require("url").parse(url);
+    var getOption = {
+        "hostname"  : urlObj.hostname,
+        "port"  : urlObj.port,
+        "path"  : urlObj.path
+    };
+    if (process.env.NODE_DEVHUB_USER && process.env.NODE_DEVHUB_PASS){
+        getOption.auth = process.env.NODE_DEVHUB_USER + ":" + process.env.NODE_DEVHUB_PASS;
+    }
+
+    http.get(getOption, function(){});
 }
 
 function postPushNotification(name, payload, avatar){
@@ -81,6 +102,7 @@ app.post('/gitlab', function(req, res){
 	postData("gitlab", msg);
 	res.json({});
 });
+
 app.post('/redmine', function(req, res){
 	var data = req.body;
 	var action = data.payload.action;
