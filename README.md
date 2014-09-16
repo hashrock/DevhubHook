@@ -45,3 +45,10 @@ $ PORT=4000 DEVHUB=http://192.168.1.5:3000 NO=5 LINE=1 node app.js
  * gitbucket: http://192.168.1.5:4000/gitbucket
  * github: http://192.168.1.5:4000/github
 
+
+BASIC認証
+--------
+
+```
+$ PORT=4000 DEVHUB=http://192.168.1.5:3000 NO=5 LINE=1 NODE_DEVHUB_USER=user NODE_DEVHUB_PASS=pass node app.js
+```
