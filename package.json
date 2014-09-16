@@ -12,5 +12,8 @@
     "request": "~2.36.0",
     "q": "~1.0.1",
     "moment": "2.6.0"
+  },
+  "devDependencies": {
+    "request": "^2.36.0"
   }
 }
