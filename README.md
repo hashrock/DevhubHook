@@ -36,7 +36,7 @@ $ PORT=4000 DEVHUB=http://192.168.1.5:3000 SERVER_HOST=localhost node app.js
 また、指定の共有メモに通知を追加したい場合は下記のようにする。(NO:共有メモNo,LINE:挿入する行)
 
 ```
-$ PORT=4000 DEVHUB=http://192.168.1.5:3000 NO=5 LINE=1 node app.js
+$ PORT=4000 DEVHUB=http://192.168.1.5:3000 SERVER_HOST=localhost NO=5 LINE=1 node app.js
 ```
 
 各WebHookにDevhubHookの待ち受けURLを指定して下さい。
@@ -45,10 +45,12 @@ $ PORT=4000 DEVHUB=http://192.168.1.5:3000 NO=5 LINE=1 node app.js
  * gitbucket: http://192.168.1.5:4000/gitbucket
  * github: http://192.168.1.5:4000/github
 
+github, gitbucketでは、アバターを表示するためにSERVER_HOSTオプションが必要です。
+
 
 BASIC認証
 --------
 
 ```
-$ PORT=4000 DEVHUB=http://192.168.1.5:3000 NO=5 LINE=1 NODE_DEVHUB_USER=user NODE_DEVHUB_PASS=pass node app.js
+$ PORT=4000 DEVHUB=http://192.168.1.5:3000 SERVER_HOST=localhost NO=5 LINE=1 NODE_DEVHUB_USER=user NODE_DEVHUB_PASS=pass node app.js
 ```
