@@ -16,6 +16,7 @@ app.set('devhub', process.env.DEVHUB);
 app.set('memo_no', process.env.NO);
 app.set('memo_line', process.env.LINE);
 app.set('server_host', process.env.SERVER_HOST);
+app.set('avatar_url', "http://" + app.get("server_host") + ":" + app.get("port"));
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -110,14 +111,14 @@ app.post('/redmine', function(req, res){
 	var subject = data.payload.issue.subject;
 	var url = data.payload.url;
 	var msg = author + " " + action + " [" + subject + "]("+ url + ")";
-	postData("redmine", msg);
+ 	postData("redmine", msg, app.get("avatar_url") + "/redmine.png");
 	res.json({});
 });
 app.post('/gitbucket', function(req, res){
 	var data = req.body;
 	var payload = JSON.parse(data.payload);
 
-	postPushNotification("gitbucket", payload, "http://" + app.get("server_host") + ":" + app.get("port") + "/gitbucket.png");
+	postPushNotification("gitbucket", payload, app.get("avatar_url") + "/gitbucket.png");
 	res.json({});
 });
 app.post('/github', function(req, res){
@@ -129,7 +130,7 @@ app.post('/github', function(req, res){
 		return;
 	}
 
-	postPushNotification("github", payload, "http://" + app.get("server_host") + ":" + app.get("port") + "/github.png");
+	postPushNotification("github", payload, app.get("avatar_url") + "/github.png");
 	res.json({});
 });
 
